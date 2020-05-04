@@ -36,7 +36,7 @@ import ModalDueTime from './Shared/ModalDueTime.vue';
 import ModalButtons from './Shared/ModalButtons.vue';
 
 export default {
-  name: 'AddTask',
+  name: 'Edit Task',
   components: {
     ModalHeader,
     ModalTaskName,
@@ -44,18 +44,17 @@ export default {
     ModalDueTime,
     ModalButtons,
   },
+  props: ['task', 'id'],
   data() {
     return {
-      taskToSubmit: {
-        name: '',
-        dueDate: '',
-        dueTime: '',
-        completed: false,
-      },
+      taskToSubmit: {},
     };
   },
+  mounted() {
+    this.taskToSubmit = Object.assign({}, this.task);
+  },
   methods: {
-    ...mapActions('tasks', ['addTask']),
+    ...mapActions('tasks', ['updateTask']),
     submitForm() {
       const nameRef = this.$refs.modalTaskName.$refs.name;
       nameRef.validate();
@@ -64,7 +63,10 @@ export default {
       }
     },
     submitTask() {
-      this.addTask(this.taskToSubmit);
+      this.updateTask({
+        id: this.id,
+        updates: this.taskToSubmit,
+      });
       this.$emit('close');
     },
     clearDueDate() {
